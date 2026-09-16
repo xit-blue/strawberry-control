@@ -1,0 +1,100 @@
+@{
+    ViewData["Title"] = "Detalle del pedido";
+    var pedido = (string)ViewBag.Pedido;
+    var isAdmin = User.IsInRole("ADMIN");
+}
+<div id="orderPage" data-order="@pedido" data-admin="@(isAdmin ? "true" : "false")">
+    <section class="page-heading detail-heading">
+        <div><a class="back-link" asp-controller="Orders" asp-action="Index">← Volver a pedidos</a><div class="title-line"><h1>Pedido <span id="orderNumber">@pedido</span></h1><span id="orderStatusBadge" class="status-badge neutral">Cargando</span></div><p id="orderSubtitle">Obteniendo información del pedido...</p></div>
+        <div class="heading-actions" id="orderHeaderActions">
+            <button class="btn btn-ghost" id="releaseOrder" type="button">Liberar atención</button>
+            <button class="btn btn-dark" id="claimOrder" type="button">Tomar atención</button>
+        </div>
+    </section>
+
+    <section class="attention-banner hidden" id="attentionBanner"></section>
+
+    <div class="detail-layout">
+        <div class="detail-main">
+            <section class="card action-card">
+                <div class="card-header"><div><span class="eyebrow">CONTACTO</span><h3>Resultado de llamada</h3></div><span class="attempt-badge" id="attemptBadge">0 / 5</span></div>
+                <div class="attempt-progress"><span id="attemptProgress"></span></div>
+                <div class="call-actions">
+                    <button class="action-button danger-soft" id="noAnswerButton" type="button"><strong>No responde</strong><span>Incrementa el intento automáticamente</span></button>
+                    <button class="action-button success-soft" id="answeredButton" type="button"><strong>Respondió</strong><span>Confirma el resultado de la llamada</span></button>
+                    <a class="action-button whatsapp-soft" id="whatsappButton" href="#" target="_blank" rel="noopener"><strong>WhatsApp</strong><span>Abrir conversación con el cliente</span></a>
+                </div>
+            </section>
+
+            <form id="orderForm" class="card">
+                <div class="card-header"><div><span class="eyebrow">DATOS DEL PEDIDO</span><h3>Información editable</h3></div><button class="btn btn-primary" type="submit" id="saveOrder">Guardar cambios</button></div>
+                <div class="form-grid three">
+                    <label class="field span-2"><span>Cliente</span><input name="cliente" id="cliente" /></label>
+                    <label class="field"><span>Teléfono</span><input name="telefono" id="telefono" inputmode="numeric" /></label>
+                    <label class="field"><span>DNI</span><input name="dni" id="dni" inputmode="numeric" /></label>
+                    <label class="field"><span>Departamento</span><input name="departamento" id="departamento" /></label>
+                    <label class="field"><span>Provincia</span><input name="provincia" id="provincia" /></label>
+                    <label class="field"><span>Distrito</span><input name="distrito" id="distrito" /></label>
+                    <label class="field span-2"><span>Dirección</span><input name="direccion" id="direccion" /></label>
+                    <label class="field"><span>Cantidad Shopify</span><input id="cantidadShopify" disabled /></label>
+                    <label class="field"><span>Cantidad real</span><input name="cantidadReal" id="cantidadReal" type="number" min="0" /></label>
+                    <label class="field"><span>Zona</span><select name="zona" id="zona"><option>LIMA</option><option>PROVINCIA</option></select></label>
+                    <label class="field"><span>Modo zona</span><select name="modoZona" id="modoZona"><option>AUTO</option><option>MANUAL</option></select></label>
+                    <label class="field"><span>Estado</span><select name="estado" id="estado"></select></label>
+                    <label class="field span-2"><span>Comentario</span><textarea name="comentario" id="comentario" rows="3"></textarea></label>
+                </div>
+            </form>
+
+            <section class="card" id="logisticsCard">
+                <div class="card-header"><div><span class="eyebrow">LOGÍSTICA Y PAGO</span><h3>Entrega, envío y adelanto</h3></div></div>
+                <div class="form-grid three">
+                    <label class="field" id="deliveryDateField"><span>Fecha de entrega</span><input id="fechaEntrega" type="date" /></label>
+                    <label class="field" id="shippingDateField"><span>Fecha de envío</span><input id="fechaEnvio" type="date" /></label>
+                    <label class="field" id="advanceField"><span>Adelanto</span><input id="adelanto" type="number" min="0" step="0.01" /></label>
+                    <label class="field" id="balanceField"><span>Saldo</span><input id="saldo" disabled /></label>
+                    <label class="field" id="shalomFreightField"><span>Flete Shalom</span><input id="fleteShalom" type="number" min="0" step="0.01" /></label>
+                    <label class="field" id="shalomKeyField"><span>Clave Shalom</span><input id="claveShalom" /></label>
+                </div>
+                <div class="quick-flow" id="quickFlow"></div>
+            </section>
+
+            <section class="card">
+                <div class="card-header"><div><span class="eyebrow">HISTORIAL</span><h3>Llamadas y respuestas</h3></div><button class="btn btn-ghost btn-sm" id="reloadHistory" type="button">Actualizar</button></div>
+                <div class="timeline" id="callHistory"><div class="table-loading">Cargando historial...</div></div>
+            </section>
+        </div>
+
+        <aside class="detail-side">
+            <section class="card summary-card">
+                <span class="eyebrow">RESUMEN</span>
+                <div class="summary-row"><span>Producto</span><strong id="summaryProduct">—</strong></div>
+                <div class="summary-row"><span>Plataforma</span><strong id="summaryPlatform">—</strong></div>
+                <div class="summary-row"><span>Zona</span><strong id="summaryZone">—</strong></div>
+                <div class="summary-row"><span>Total</span><strong id="summaryTotal">S/ —</strong></div>
+                <div class="summary-row"><span>Condición</span><strong id="summaryPayment">—</strong></div>
+                <div class="summary-row"><span>Última actualización</span><strong id="summaryUpdated">—</strong></div>
+            </section>
+            <section class="card product-side-card"><img src="~/images/product-3.webp" alt="Strawberry Skin Cream" width="1000" height="1000" loading="lazy" decoding="async" /><div><span class="eyebrow">STRAWBERRY</span><h3>Gestión completa del pedido</h3><p>Cada cambio queda registrado para mantener continuidad entre trabajadores.</p></div></section>
+        </aside>
+    </div>
+</div>
+
+<dialog id="responseDialog" class="app-dialog">
+    <form method="dialog" id="responseForm">
+        <div class="dialog-header"><div><span class="eyebrow">RESPUESTA DEL CLIENTE</span><h3>Registrar resultado</h3></div><button class="icon-btn" value="cancel" aria-label="Cerrar">×</button></div>
+        <label class="field"><span>Resultado</span><select id="responseResult" required><option value="Confirmado">Confirmado</option><option value="En espera">En espera</option><option value="Volver a llamar">Volver a llamar</option><option value="Cancelado">Cancelado</option></select></label>
+        <label class="field hidden" id="callbackField"><span>Próxima llamada</span><input id="callbackDate" type="datetime-local" /></label>
+        <label class="field hidden" id="cancelReasonField"><span>Motivo de cancelación</span><select id="cancelReason"><option value="">Selecciona...</option><option>Cliente no desea el producto</option><option>Precio</option><option>Pedido por error</option><option>Datos incorrectos</option><option>Fuera de cobertura</option><option>Otro</option></select></label>
+        <label class="field"><span>Comentario</span><textarea id="responseComment" rows="3" placeholder="Opcional"></textarea></label>
+        <div class="dialog-actions"><button class="btn btn-ghost" value="cancel">Cancelar</button><button class="btn btn-primary" id="confirmResponse" type="button">Guardar respuesta</button></div>
+    </form>
+</dialog>
+
+@if (isAdmin)
+{
+<dialog id="reopenDialog" class="app-dialog">
+    <form method="dialog"><div class="dialog-header"><div><span class="eyebrow">ADMINISTRADOR</span><h3>Reabrir pedido</h3></div><button class="icon-btn" value="cancel">×</button></div><label class="field"><span>Estado al reabrir</span><select id="reopenState"><option>Por llamar</option><option>En espera</option><option>Confirmado</option></select></label><div class="dialog-actions"><button class="btn btn-ghost" value="cancel">Cancelar</button><button class="btn btn-primary" id="confirmReopen" type="button">Reabrir</button></div></form>
+</dialog>
+}
+
+@section Scripts { <script src="~/js/order-detail.js" asp-append-version="true"></script> }

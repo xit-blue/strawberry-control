@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var isAdmin = User.IsInRole("ADMIN");
+}
+<section class="page-heading">
+    <div><span class="eyebrow">RESUMEN OPERATIVO</span><h1>Hola, @User.Identity?.Name</h1><p>Revisa el estado actual de la operación y los pendientes prioritarios. <span id="dashboardFreshness" class="muted"></span></p></div>
+    <div class="heading-actions">
+        @if (isAdmin) { <button class="btn btn-ghost" id="syncButton" type="button">Sincronizar Shopify</button> }
+        <button class="btn btn-primary" id="refreshDashboard" type="button">Actualizar</button>
+    </div>
+</section>
+
+<section class="hero-grid">
+    <article class="hero-card hero-main">
+        <div><span class="eyebrow light">CONTROL DEL DÍA</span><h2 id="heroTotal">— pedidos</h2><p id="heroText">Cargando actividad...</p></div>
+        <img src="~/images/product-2.webp" alt="Strawberry Skin Cream" width="1000" height="1000" decoding="async" fetchpriority="high" />
+    </article>
+    <article class="hero-card compact"><span class="metric-label">Llamadas hoy</span><strong id="callsToday">—</strong><small>contactos registrados</small></article>
+    <article class="hero-card compact"><span class="metric-label">Atendiendo ahora</span><strong id="activeNow">—</strong><small>pedidos bloqueados</small></article>
+</section>
+
+<section class="metric-grid" id="operationalMetrics">
+    <article class="metric-card"><span>Por llamar</span><strong data-state="Por llamar">—</strong><small>Pendientes de primer contacto o reintento</small></article>
+    <article class="metric-card warning"><span>Volver a llamar</span><strong data-state="Volver a llamar">—</strong><small><b id="overdueCallbacks">—</b> vencidas</small></article>
+    <article class="metric-card"><span>Confirmados</span><strong data-state="Confirmado">—</strong><small>Pedidos aceptados por el cliente</small></article>
+    <article class="metric-card info"><span>Esperando adelanto</span><strong data-state="Esperando adelanto">—</strong><small><b id="advanceNearExpiry">—</b> próximos a vencer</small></article>
+    <article class="metric-card"><span>Programados</span><strong data-state="Programado">—</strong><small>Entregas Lima programadas</small></article>
+    <article class="metric-card"><span>Enviados</span><strong data-state="Enviado">—</strong><small>Provincia en tránsito</small></article>
+    <article class="metric-card success"><span>Entregados</span><strong data-state="Entregado">—</strong><small>Pedidos finalizados</small></article>
+    <article class="metric-card danger"><span>Cancelados</span><strong data-state="Cancelado">—</strong><small>Pedidos cerrados sin venta</small></article>
+</section>
+
+@if (isAdmin)
+{
+<section class="section-block">
+    <div class="section-heading"><div><span class="eyebrow">FINANZAS</span><h2>Resultado real y proyección</h2></div><a class="text-link" asp-controller="Admin" asp-action="Reports">Ver reporte completo →</a></div>
+    <div class="finance-grid">
+        <article class="finance-card"><span>Ingresos reales</span><strong id="realIncome">S/ —</strong><small id="realPeriod">Periodo actual</small></article>
+        <article class="finance-card"><span>Ganancia real</span><strong id="realProfit">S/ —</strong><small>después de costos y publicidad</small></article>
+        <article class="finance-card accent"><span>Ingresos proyectados</span><strong id="projectedIncome">S/ —</strong><small>según estados operativos</small></article>
+        <article class="finance-card accent"><span>Ganancia proyectada</span><strong id="projectedProfit">S/ —</strong><small>estimación del periodo</small></article>
+    </div>
+</section>
+}
+
+<section class="dashboard-lower-grid">
+    <article class="card">
+        <div class="card-header"><div><span class="eyebrow">DISTRIBUCIÓN</span><h3>Pedidos por estado</h3></div></div>
+        <div id="stateBars" class="bar-list"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+    </article>
+    <article class="card promo-card">
+        <img src="~/images/product-4.webp" alt="Producto Strawberry Skin Cream" width="1000" height="1000" loading="lazy" decoding="async" />
+        <div><span class="eyebrow">ACCESO RÁPIDO</span><h3>Gestiona la cola de pedidos</h3><p>Busca por cliente, teléfono, pedido o ubicación y continúa desde el último contacto registrado.</p><a class="btn btn-primary" asp-controller="Orders" asp-action="Index">Abrir pedidos</a></div>
+    </article>
+</section>
+
+@section Scripts { <script src="~/js/dashboard.js" asp-append-version="true"></script> }

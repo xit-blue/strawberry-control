@@ -1,0 +1,22 @@
+# Checklist antes de publicar
+
+- [ ] `configurarBaseWebV45()` termino correctamente.
+- [ ] `crearOResetearAdministrador()` termino correctamente.
+- [ ] `pruebaBackendV45()` muestra `API V4.5 OK`.
+- [ ] Apps Script fue desplegado nuevamente como nueva version.
+- [ ] `GET /exec?action=health` devuelve `version=4.5.0`.
+- [ ] `auxiliaryConfigured=true`.
+- [ ] `AppsScript__BaseUrl` apunta a la URL `/exec` correcta.
+- [ ] `dotnet restore StrawberryControl.sln` finaliza correctamente.
+- [ ] `dotnet build StrawberryControl.sln -c Release` finaliza correctamente.
+- [ ] Login ADMIN funciona.
+- [ ] Dashboard carga datos reales.
+- [ ] Listado de pedidos carga datos reales.
+- [ ] Tomar/liberar pedido funciona.
+- [ ] `NO RESPONDE` incrementa intentos.
+- [ ] `VOLVER A LLAMAR` conserva fecha/hora.
+- [ ] Flujo Lima probado.
+- [ ] Flujo Provincia probado.
+- [ ] Publicidad/reportes probados con ADMIN.
+- [ ] Trabajador no puede acceder a rutas `/Admin/*`.
+- [ ] Se cambio la clave temporal del Administrador.
