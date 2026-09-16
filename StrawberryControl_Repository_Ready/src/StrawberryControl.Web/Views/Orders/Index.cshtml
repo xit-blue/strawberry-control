@@ -1,0 +1,32 @@
+@{
+    ViewData["Title"] = "Pedidos";
+}
+<section class="page-heading">
+    <div><span class="eyebrow">GESTIÓN DE PEDIDOS</span><h1>Todos los pedidos</h1><p>Consulta, filtra y continúa la atención sin perder el historial del cliente.</p></div>
+    <button class="btn btn-primary" id="refreshOrders" type="button">Actualizar lista</button>
+</section>
+
+<section class="card filters-card">
+    <div class="filters-grid">
+        <label class="field search-field"><span>Buscar</span><input id="filterSearch" type="search" placeholder="Pedido, cliente, teléfono, DNI o dirección" /></label>
+        <label class="field"><span>Estado</span><select id="filterState"><option value="">Todos</option></select></label>
+        <label class="field"><span>Zona</span><select id="filterZone"><option value="">Todas</option><option>LIMA</option><option>PROVINCIA</option></select></label>
+        <label class="field"><span>Plataforma</span><select id="filterPlatform"><option value="TODAS">Todas</option><option value="FACEBOOK">Facebook</option><option value="TIK TOK">TikTok</option></select></label>
+        <label class="field"><span>Desde</span><input id="filterFrom" type="date" /></label>
+        <label class="field"><span>Hasta</span><input id="filterTo" type="date" /></label>
+    </div>
+    <div class="filters-actions"><button class="btn btn-ghost" id="clearFilters" type="button">Limpiar filtros</button><button class="btn btn-dark" id="applyFilters" type="button">Aplicar filtros</button></div>
+</section>
+
+<section class="card table-card">
+    <div class="table-toolbar"><div><strong id="ordersCount">0 pedidos</strong><span id="pageInfo">Página 1</span></div><label class="inline-select">Mostrar <select id="pageSize"><option>25</option><option selected>50</option><option>100</option></select></label></div>
+    <div class="table-scroll">
+        <table class="data-table orders-table">
+            <thead><tr><th>Pedido</th><th>Cliente</th><th>Contacto</th><th>Zona</th><th>Cant.</th><th>Total</th><th>Estado</th><th>Intentos</th><th>Atendiendo</th><th></th></tr></thead>
+            <tbody id="ordersBody"><tr><td colspan="10"><div class="table-loading">Cargando pedidos...</div></td></tr></tbody>
+        </table>
+    </div>
+    <div class="pagination"><button class="btn btn-ghost btn-sm" id="prevPage" type="button">← Anterior</button><span id="paginationLabel">1 / 1</span><button class="btn btn-ghost btn-sm" id="nextPage" type="button">Siguiente →</button></div>
+</section>
+
+@section Scripts { <script src="~/js/orders.js" asp-append-version="true"></script> }

@@ -1,0 +1,7 @@
+@{
+    ViewData["Title"] = "Auditoría";
+}
+<section class="page-heading"><div><span class="eyebrow">ADMINISTRADOR</span><h1>Auditoría del sistema</h1><p>Consulta quién realizó cada acción y mantiene trazabilidad de los cambios operativos.</p></div><button class="btn btn-primary" id="refreshAudit" type="button">Actualizar</button></section>
+<section class="card filters-card"><div class="filters-grid audit-filters"><label class="field search-field"><span>Buscar</span><input id="auditSearch" placeholder="Usuario, acción, detalle..."/></label><label class="field"><span>Pedido</span><input id="auditOrder" placeholder="# pedido"/></label><label class="field"><span>Límite</span><select id="auditLimit"><option>100</option><option selected>200</option><option>500</option></select></label></div><div class="filters-actions"><button class="btn btn-dark" id="applyAudit" type="button">Buscar</button></div></section>
+<section class="card table-card"><div class="table-scroll"><table class="data-table"><thead><tr><th>Fecha</th><th>Usuario</th><th>Rol</th><th>Acción</th><th>Pedido</th><th>Detalle</th><th>Origen</th></tr></thead><tbody id="auditBody"></tbody></table></div></section>
+@section Scripts { <script src="~/js/admin-audit.js" asp-append-version="true"></script> }

@@ -1,0 +1,79 @@
+@model LoginViewModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Iniciar sesión";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iniciar sesión - Strawberry Control</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="login-page">
+    <div class="login-shell">
+        <section class="login-visual">
+            <div class="login-visual-copy">
+                <span class="eyebrow">GESTIÓN COMERCIAL</span>
+                <h1>Controla pedidos, llamadas, entregas y ventas desde un solo lugar.</h1>
+                <p>Tu operación de Shopify y Google Sheets, ahora organizada dentro de un sistema web profesional.</p>
+                <div class="login-stat-row">
+                    <div><strong>5</strong><span>intentos máximos</span></div>
+                    <div><strong>7 días</strong><span>espera de adelanto</span></div>
+                    <div><strong>10</strong><span>trabajadores</span></div>
+                </div>
+            </div>
+            <div class="login-product-stage">
+                <img src="~/images/product-1.png" alt="Strawberry Skin Cream" />
+            </div>
+        </section>
+
+        <section class="login-panel">
+            <div class="login-card">
+                <div class="login-brand"><span class="brand-mark">S</span><div><strong>STRAWBERRY</strong><small>CONTROL</small></div></div>
+                <div class="login-heading">
+                    <h2>Bienvenido</h2>
+                    <p>Ingresa con tu cuenta para continuar.</p>
+                </div>
+
+                @if ((bool?)ViewBag.Expired == true)
+                {
+                    <div class="alert alert-warning">Tu sesión terminó. Inicia sesión nuevamente.</div>
+                }
+
+                <form asp-action="Login" method="post" class="form-stack">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+                    <label class="field">
+                        <span>Usuario</span>
+                        <input asp-for="Username" autocomplete="username" placeholder="Ej. juan" autofocus />
+                        <small asp-validation-for="Username"></small>
+                    </label>
+                    <label class="field">
+                        <span>Contraseña</span>
+                        <div class="password-field">
+                            <input asp-for="Password" autocomplete="current-password" placeholder="••••••••" />
+                            <button id="togglePassword" type="button" aria-label="Mostrar contraseña">Ver</button>
+                        </div>
+                        <small asp-validation-for="Password"></small>
+                    </label>
+                    <label class="check-row"><input asp-for="RememberMe" /> <span>Mantener sesión en este equipo</span></label>
+                    <button type="submit" class="btn btn-primary btn-lg full">Ingresar al sistema</button>
+                </form>
+                <p class="login-note">El Administrador crea y gestiona las cuentas de los trabajadores.</p>
+            </div>
+        </section>
+    </div>
+    <script>
+        const btn = document.getElementById('togglePassword');
+        btn?.addEventListener('click', () => {
+            const input = document.getElementById('Password');
+            const visible = input.type === 'text';
+            input.type = visible ? 'password' : 'text';
+            btn.textContent = visible ? 'Ver' : 'Ocultar';
+        });
+    </script>
+</body>
+</html>

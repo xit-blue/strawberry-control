@@ -1,0 +1,8 @@
+@{
+    ViewData["Title"] = "Reportes";
+}
+<section class="page-heading"><div><span class="eyebrow">ADMINISTRADOR</span><h1>Reportes y proyecciones</h1><p>Analiza información real, proyección, publicidad, costos y ganancia por periodo y plataforma.</p></div><button class="btn btn-primary" id="refreshReport" type="button">Actualizar reporte</button></section>
+<section class="card filters-card"><div class="filters-grid report-filters"><label class="field"><span>Desde</span><input id="reportFrom" type="date" /></label><label class="field"><span>Hasta</span><input id="reportTo" type="date" /></label><label class="field"><span>Plataforma</span><select id="reportPlatform"><option value="TODAS">Todas</option><option value="FACEBOOK">Facebook</option><option value="TIK TOK">TikTok</option></select></label></div><div class="filters-actions"><button class="btn btn-dark" id="applyReport" type="button">Aplicar</button></div></section>
+<div class="report-columns"><section class="card report-card"><div class="card-header"><div><span class="eyebrow">INFORMACIÓN REAL</span><h3 id="realRange">Periodo</h3></div></div><div id="realMetrics" class="report-metric-list"></div></section><section class="card report-card accent-card"><div class="card-header"><div><span class="eyebrow">PROYECCIÓN</span><h3 id="projectionRange">Periodo</h3></div></div><div id="projectionMetrics" class="report-metric-list"></div></section></div>
+<section class="card"><div class="card-header"><div><span class="eyebrow">OPERACIÓN</span><h3>Distribución actual de pedidos</h3></div></div><div id="reportStateBars" class="bar-list"></div></section>
+@section Scripts { <script src="~/js/admin-reports.js" asp-append-version="true"></script> }

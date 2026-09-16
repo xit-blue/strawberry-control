@@ -1,0 +1,79 @@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var tokens = Antiforgery.GetAndStoreTokens(Context);
+    var path = Context.Request.Path.Value ?? "";
+    var isAdmin = User.IsInRole("ADMIN");
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="@tokens.RequestToken" />
+    <meta name="user-role" content="@(isAdmin ? "ADMIN" : "TRABAJADOR")" />
+    <meta name="user-name" content="@User.Identity?.Name" />
+    <title>@ViewData["Title"] - Strawberry Control</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="app-shell">
+    <aside class="sidebar" id="sidebar">
+        <a class="brand" asp-controller="Home" asp-action="Index">
+            <span class="brand-mark">S</span>
+            <span><strong>STRAWBERRY</strong><small>CONTROL</small></span>
+        </a>
+
+        <nav class="sidebar-nav" aria-label="Navegación principal">
+            <a class="nav-item @(path == "/" || path.StartsWith("/Home") ? "active" : "")" asp-controller="Home" asp-action="Index">
+                <span class="nav-dot"></span><span>Dashboard</span>
+            </a>
+            <a class="nav-item @(path.StartsWith("/Orders") ? "active" : "")" asp-controller="Orders" asp-action="Index">
+                <span class="nav-dot"></span><span>Pedidos</span>
+            </a>
+            @if (isAdmin)
+            {
+                <div class="nav-section">ADMINISTRACIÓN</div>
+                <a class="nav-item @(path.StartsWith("/Admin/Reports") ? "active" : "")" asp-controller="Admin" asp-action="Reports"><span class="nav-dot"></span><span>Reportes</span></a>
+                <a class="nav-item @(path.StartsWith("/Admin/Advertising") ? "active" : "")" asp-controller="Admin" asp-action="Advertising"><span class="nav-dot"></span><span>Publicidad</span></a>
+                <a class="nav-item @(path.StartsWith("/Admin/Users") ? "active" : "")" asp-controller="Admin" asp-action="Users"><span class="nav-dot"></span><span>Usuarios</span></a>
+                <a class="nav-item @(path.StartsWith("/Admin/Configuration") ? "active" : "")" asp-controller="Admin" asp-action="Configuration"><span class="nav-dot"></span><span>Configuración</span></a>
+                <a class="nav-item @(path.StartsWith("/Admin/Audit") ? "active" : "")" asp-controller="Admin" asp-action="Audit"><span class="nav-dot"></span><span>Auditoría</span></a>
+            }
+        </nav>
+
+        <div class="sidebar-user">
+            <div class="user-avatar">@((User.Identity?.Name ?? "U").Substring(0, 1).ToUpperInvariant())</div>
+            <div class="user-copy">
+                <strong>@User.Identity?.Name</strong>
+                <small>@(isAdmin ? "Administrador" : "Trabajador")</small>
+            </div>
+            <form asp-controller="Auth" asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
+                <button class="icon-btn" type="submit" title="Cerrar sesión" aria-label="Cerrar sesión">↗</button>
+            </form>
+        </div>
+    </aside>
+
+    <div class="app-content">
+        <header class="topbar">
+            <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menú">☰</button>
+            <div class="topbar-copy">
+                <strong>@ViewData["Title"]</strong>
+                <span id="connectionStatus" class="connection-status">Conectando...</span>
+            </div>
+            <div class="topbar-actions">
+                <a class="btn btn-ghost btn-sm" asp-controller="Orders" asp-action="Index">Ver pedidos</a>
+            </div>
+        </header>
+
+        <main class="page-wrap">
+            @RenderBody()
+        </main>
+    </div>
+
+    <div id="toastHost" class="toast-host" aria-live="polite"></div>
+    <div id="pageLoader" class="page-loader hidden" aria-hidden="true"><span></span></div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
