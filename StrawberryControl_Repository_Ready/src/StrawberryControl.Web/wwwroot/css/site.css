@@ -346,3 +346,34 @@ img { max-width: 100%; display: block; }
   .bar-row { grid-template-columns: 112px minmax(0,1fr) 34px; }
   .toast-host { right: 12px; bottom: 12px; }
 }
+
+
+/* PUBLICIDAD - GRAFICO DE LINEA V4.7.3 */
+.advertising-chart-card { margin-top: 14px; overflow: hidden; }
+.advertising-chart-header { align-items: flex-start; gap: 20px; }
+.advertising-chart-header h3 { margin: 4px 0 4px; }
+.advertising-chart-header p { margin: 0; }
+.advertising-chart-metrics { display: grid; grid-template-columns: repeat(3,minmax(120px,1fr)); gap: 10px; min-width: min(100%, 460px); }
+.advertising-chart-metrics > div { border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; background: #fffaf7; display: flex; flex-direction: column; gap: 3px; }
+.advertising-chart-metrics span { color: var(--muted); font-size: .7rem; }
+.advertising-chart-metrics strong { font-size: .9rem; }
+.advertising-chart-scroll { overflow-x: auto; overflow-y: hidden; padding: 4px 8px 8px; scrollbar-width: thin; }
+.advertising-chart { min-height: 360px; color: var(--brand); }
+.advertising-line-chart { display: block; max-width: none; font-family: inherit; overflow: visible; }
+.ad-chart-grid { stroke: #eadfd8; stroke-width: 1; stroke-dasharray: 4 5; }
+.ad-chart-axis { stroke: #cbbeb5; stroke-width: 1.1; }
+.ad-chart-y-label, .ad-chart-x-label { fill: #766b64; font-size: 11px; }
+.ad-chart-axis-title { fill: #524943; font-size: 11px; font-weight: 700; letter-spacing: .02em; }
+.ad-chart-area { fill: url(#adAreaGradient); color: var(--brand); }
+.ad-chart-line { fill: none; stroke: var(--brand); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ad-chart-point circle { fill: white; stroke: var(--brand); stroke-width: 3; transition: r .15s ease, fill .15s ease; }
+.ad-chart-point:hover circle { r: 7; fill: #fde7e5; }
+.chart-empty { min-height: 320px; display: grid; place-items: center; color: var(--muted); font-size: .82rem; }
+
+@media (max-width: 900px) {
+  .advertising-chart-header { flex-direction: column; }
+  .advertising-chart-metrics { width: 100%; min-width: 0; }
+}
+@media (max-width: 640px) {
+  .advertising-chart-metrics { grid-template-columns: 1fr; }
+}

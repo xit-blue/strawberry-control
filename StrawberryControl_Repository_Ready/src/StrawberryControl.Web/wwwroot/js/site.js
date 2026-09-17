@@ -98,6 +98,8 @@
 
   function toDateInput(value) {
     if (!value) return '';
+    const raw = String(value).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
     const d = parseDate(value);
     if (!d) return '';
     const offset = d.getTimezoneOffset();
@@ -115,7 +117,14 @@
   }
 
   function parseDate(value) {
-    const d = value instanceof Date ? value : new Date(value);
+    if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+    const raw = String(value ?? '').trim();
+    const dateOnly = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (dateOnly) {
+      const d = new Date(Number(dateOnly[1]), Number(dateOnly[2]) - 1, Number(dateOnly[3]), 12, 0, 0, 0);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+    const d = new Date(raw);
     return Number.isNaN(d.getTime()) ? null : d;
   }
 

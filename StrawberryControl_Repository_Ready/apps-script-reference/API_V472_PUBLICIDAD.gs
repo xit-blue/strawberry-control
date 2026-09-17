@@ -1,5 +1,5 @@
 /**
- * STRAWBERRY CONTROL V4.7.2 - API PUBLICIDAD CORREGIDA + RENDIMIENTO
+ * STRAWBERRY CONTROL V4.7.3 - API PUBLICIDAD CORREGIDA + RENDIMIENTO
  * -----------------------------------------------------------------------------
  * - GESTION PEDIDOS / GASTOS / RESUMEN permanecen en el archivo principal.
  * - USUARIOS / SESIONES / HISTORIAL / AUDITORIA / METADATA se guardan en un
@@ -8,7 +8,7 @@
  */
 
 const SC_API = {
-  VERSION: '4.7.2',
+  VERSION: '4.7.3',
   ROL_ADMIN: 'ADMIN',
   ROL_TRABAJADOR: 'TRABAJADOR',
   PASSWORD_MIN: 8

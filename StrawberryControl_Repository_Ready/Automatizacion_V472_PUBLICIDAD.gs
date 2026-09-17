@@ -1,5 +1,5 @@
 /**
- * STRAWBERRY CONTROL V4.7.2 - PUBLICIDAD CORREGIDA + SINCRONIZACION INCREMENTAL
+ * STRAWBERRY CONTROL V4.7.3 - PUBLICIDAD CORREGIDA + SINCRONIZACION INCREMENTAL
  * -----------------------------------------------------------------------------
  * HOJA 1            : fuente original de pedidos. NO SE MODIFICA.
  * GESTION PEDIDOS   : hoja operativa FB - TIK TOK.
@@ -23,7 +23,7 @@
  */
 
 const SC_CONFIG = {
-  VERSION: '4.7.2',
+  VERSION: '4.7.3',
   HOJA_ORIGEN: 'Hoja 1',
   HOJA_GESTION: 'GESTION PEDIDOS',
   HOJA_GASTOS: 'GASTOS PUBLICIDAD',
@@ -1403,7 +1403,7 @@ function obtenerTipoCambioPublicidadV472_() {
 }
 
 /**
- * V4.7.2 - Logica original de publicidad restaurada.
+ * V4.7.3 - Logica original de publicidad restaurada.
  * B = FB DOLARES (manual)
  * C = FB SOLES = B * tipo de cambio (automatico)
  * D = TIKTOK SOLES (manual)
@@ -2936,7 +2936,7 @@ function sincronizarAhoraV47() {
   return verificarSincronizacionV47();
 }
 
-/** Ejecutar UNA VEZ al actualizar a V4.7.2. Repara publicidad historica y conserva pedidos. */
+/** Ejecutar UNA VEZ al actualizar a V4.7.3. Repara publicidad historica y conserva pedidos. */
 function actualizarNegocioV472() {
   const libro = obtenerLibro_();
   const gestion = libro.getSheetByName(SC_CONFIG.HOJA_GESTION);
@@ -2946,7 +2946,7 @@ function actualizarNegocioV472() {
   try { actualizarResumenVentasCore_(libro); } catch (e) { console.error(e); }
   asegurarActivadorSincronizacionV47_();
   const sync = sincronizarPedidosCore_(libro);
-  console.log('STRAWBERRY CONTROL V4.7.2 LISTO');
+  console.log('STRAWBERRY CONTROL V4.7.3 LISTO');
   console.log('Tipo cambio publicidad=' + leerConfiguracion_(gestion).tipoCambioPublicidad);
   console.log('Filas publicidad recalculadas=' + gastos);
   console.log('Pedidos nuevos insertados=' + sync.insertados);

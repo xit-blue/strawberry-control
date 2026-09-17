@@ -1,3 +1,7 @@
+# Strawberry Control V4.7.3
+
+**Cambio de esta versión:** fechas de publicidad sin desfase por zona horaria y gráfico lineal del gasto diario Facebook US$ (X = días, Y = dólares). La lógica comercial V4.7.2/V4.7.1 se conserva.
+
 # Strawberry Control V4.7.1
 
 Sistema ASP.NET Core + Google Apps Script + Google Sheets para gestion de pedidos Shopify.
