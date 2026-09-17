@@ -14,8 +14,7 @@
 
   async function init() {
     wireEvents();
-    await loadStates();
-    await loadOrder();
+    await loadOrderBundle();
   }
 
   function wireEvents() {
@@ -38,31 +37,20 @@
     document.getElementById('confirmReopen')?.addEventListener('click', reopenOrder);
   }
 
-  async function loadStates() {
+  async function loadOrderBundle() {
     try {
-      const data = await S.api('states', {}, { toast: false });
-      states = { lima: data.lima || [], provincia: data.provincia || [] };
-    } catch { }
-  }
-
-  async function loadOrder() {
-    try {
-      const data = await S.api('getOrder', { pedido }, { loader: true });
-      currentOrder = data.order;
+      const [statesData, orderData] = await Promise.all([
+        S.api('states', {}, { toast: false }),
+        S.api('getOrder', { pedido }, { toast: true })
+      ]);
+      states = { lima: statesData.lima || [], provincia: statesData.provincia || [] };
+      maxAttempts = Number(orderData.maxAttempts || 5);
+      currentOrder = orderData.order;
       renderOrder(currentOrder);
-      renderHistory(data.history || []);
-      await loadOperationalConfig();
+      renderHistory(orderData.history || []);
     } catch (error) {
       document.getElementById('orderSubtitle').textContent = error.message;
     }
-  }
-
-  async function loadOperationalConfig() {
-    try {
-      const dashboard = await S.api('operationalDashboard', {}, { toast: false });
-      maxAttempts = Number(dashboard.dashboard?.maxIntentos || 5);
-      renderAttempts();
-    } catch { renderAttempts(); }
   }
 
   function renderOrder(order) {

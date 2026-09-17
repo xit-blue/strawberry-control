@@ -1,7 +1,9 @@
+using System.IO.Compression;
 using System.Net;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.ResponseCompression;
 using StrawberryControl.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,25 @@ builder.Services.AddAntiforgery(options =>
 {
     options.HeaderName = "RequestVerificationToken";
 });
+
+// Cache local del proceso ASP.NET. Reduce viajes repetidos a Apps Script/Sheets.
+builder.Services.AddMemoryCache(options =>
+{
+    // Límite lógico en unidades aproximadas de KB para las respuestas JSON cacheadas.
+    options.SizeLimit = 32_768;
+});
+builder.Services.AddSingleton<IGatewayResponseCache, GatewayResponseCache>();
+
+// Compresión de HTML/CSS/JS/JSON en HTTPS.
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/json" });
+});
+builder.Services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+builder.Services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
 
 var keyDirectory = Path.Combine(builder.Environment.ContentRootPath, "App_Data", "keys");
 Directory.CreateDirectory(keyDirectory);
@@ -52,18 +73,24 @@ builder.Services
             ?? throw new InvalidOperationException("Configura AppsScript:BaseUrl en appsettings.json o AppsScript__BaseUrl como variable de entorno.");
 
         client.BaseAddress = new Uri(baseUrl);
-        client.Timeout = TimeSpan.FromSeconds(75);
-        client.DefaultRequestHeaders.UserAgent.ParseAdd("StrawberryControl-ASPNET/4.5");
+        client.Timeout = TimeSpan.FromSeconds(55);
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("StrawberryControl-ASPNET/4.7");
+        client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
     })
-    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+    .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
     {
         AllowAutoRedirect = true,
-        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+        AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate | DecompressionMethods.Brotli,
+        PooledConnectionLifetime = TimeSpan.FromMinutes(10),
+        PooledConnectionIdleTimeout = TimeSpan.FromMinutes(2),
+        MaxConnectionsPerServer = 32,
+        ConnectTimeout = TimeSpan.FromSeconds(10)
     });
 
 var app = builder.Build();
 
 app.UseForwardedHeaders();
+app.UseResponseCompression();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -72,7 +99,14 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = context =>
+    {
+        // Los assets usan asp-append-version, por eso pueden cachearse agresivamente.
+        context.Context.Response.Headers["Cache-Control"] = "public,max-age=604800,immutable";
+    }
+});
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -81,7 +115,7 @@ app.MapGet("/healthz", () => Results.Ok(new
 {
     ok = true,
     service = "Strawberry Control ASP.NET Core",
-    version = "4.5"
+    version = "4.7"
 })).AllowAnonymous();
 
 app.MapControllerRoute(

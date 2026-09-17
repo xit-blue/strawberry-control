@@ -41,8 +41,15 @@
       if (!response.ok || data.ok === false) {
         throw new ApiError(data.message || 'No se pudo completar la operación.', data.code || `HTTP_${response.status}`, data);
       }
+
+      setConnection(true, response.headers.get('X-Strawberry-Cache') === 'HIT'
+        ? 'Conectado · respuesta rápida'
+        : 'Conectado a Google Sheets');
       return data;
     } catch (error) {
+      if (['TIMEOUT', 'NETWORK_ERROR', 'INVALID_JSON'].includes(error?.code)) {
+        setConnection(false, 'Conexión lenta');
+      }
       if (options.toast !== false && error?.code !== 'AUTH_REQUIRED') toast(error.message || 'Error inesperado.', 'error');
       throw error;
     } finally {
@@ -161,15 +168,6 @@
     el.textContent = text || (ok ? 'Conectado' : 'Sin conexión');
   }
 
-  async function ping() {
-    try {
-      await api('me', {}, { toast: false });
-      setConnection(true, 'Conectado a Google Sheets');
-    } catch (error) {
-      if (error?.code !== 'AUTH_REQUIRED') setConnection(false, 'No disponible');
-    }
-  }
-
   function confirmAction(message) {
     return window.confirm(message);
   }
@@ -187,10 +185,11 @@
   });
 
   window.Strawberry = {
-    api, ApiError, toast, setLoading, money, number, date, dateTime, toDateInput, toDateTimeLocal,
+    api, ApiError, toast, setLoading, setConnection, money, number, date, dateTime, toDateInput, toDateTimeLocal,
     escapeHtml, slug, statusBadge, renderBars, attemptDots, collectForm, confirmAction,
     role, name, isAdmin: role === 'ADMIN'
   };
 
-  if (document.querySelector('meta[name="csrf-token"]')) ping();
+  // No hacemos un ping adicional. La primera llamada real de cada pantalla actualiza el estado de conexión.
+  setConnection(true, 'Sistema listo');
 })();

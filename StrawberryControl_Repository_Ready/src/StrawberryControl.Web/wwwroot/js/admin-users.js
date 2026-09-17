@@ -2,6 +2,7 @@
   'use strict';
   const S = window.Strawberry;
   let users = [];
+  let passwordTarget = null;
 
   document.addEventListener('DOMContentLoaded', init);
 
@@ -24,14 +25,21 @@
   function render() {
     document.getElementById('usersCount').textContent = `${users.length} usuarios`;
     const body = document.getElementById('usersBody');
-    body.innerHTML = users.map(user => `<tr>
-      <td><strong>${S.escapeHtml(user.usuario)}</strong></td>
-      <td>${S.escapeHtml(user.nombre)}</td>
-      <td>${S.escapeHtml(user.rol)}</td>
-      <td><span class="status-badge ${user.activo ? 'entregado' : 'cancelado'}">${user.activo ? 'Activo' : 'Inactivo'}</span></td>
-      <td>${S.dateTime(user.ultimoLogin)}</td>
-      <td><div class="table-actions">${user.rol === 'TRABAJADOR' ? `<button class="btn btn-ghost btn-sm" data-toggle="${S.escapeHtml(user.id)}">${user.activo ? 'Desactivar' : 'Activar'}</button><button class="btn btn-ghost btn-sm" data-password="${S.escapeHtml(user.id)}">Contraseña</button>` : '<span class="muted">Principal</span>'}</div></td>
-    </tr>`).join('');
+    body.innerHTML = users.map(user => {
+      const actionHtml = user.rol === 'TRABAJADOR'
+        ? `<button class="btn btn-ghost btn-sm" data-toggle="${S.escapeHtml(user.id)}">${user.activo ? 'Desactivar' : 'Activar'}</button><button class="btn btn-ghost btn-sm" data-password="${S.escapeHtml(user.id)}">Contraseña</button>`
+        : `<span class="muted">Principal</span><button class="btn btn-ghost btn-sm" data-password="${S.escapeHtml(user.id)}">Cambiar contraseña</button>`;
+
+      return `<tr>
+        <td><strong>${S.escapeHtml(user.usuario)}</strong></td>
+        <td>${S.escapeHtml(user.nombre)}</td>
+        <td>${S.escapeHtml(user.rol)}</td>
+        <td><span class="status-badge ${user.activo ? 'entregado' : 'cancelado'}">${user.activo ? 'Activo' : 'Inactivo'}</span></td>
+        <td>${S.dateTime(user.ultimoLogin)}</td>
+        <td><div class="table-actions">${actionHtml}</div></td>
+      </tr>`;
+    }).join('');
+
     body.querySelectorAll('[data-toggle]').forEach(btn => btn.addEventListener('click', () => toggleUser(btn.dataset.toggle)));
     body.querySelectorAll('[data-password]').forEach(btn => btn.addEventListener('click', () => openPassword(btn.dataset.password)));
   }
@@ -64,20 +72,43 @@
   }
 
   function openPassword(id) {
+    passwordTarget = users.find(x => String(x.id) === String(id)) || null;
+    if (!passwordTarget) return;
+
     document.getElementById('passwordUserId').value = id;
     document.getElementById('resetPasswordValue').value = '';
+    document.getElementById('passwordDialogTitle').textContent = passwordTarget.rol === 'ADMIN'
+      ? 'Cambiar contraseña del Administrador'
+      : 'Restablecer contraseña';
+    document.getElementById('passwordDialogHelp').textContent = passwordTarget.rol === 'ADMIN'
+      ? 'Al guardar, se cerrará tu sesión actual y deberás ingresar nuevamente con la nueva contraseña.'
+      : `Nueva contraseña para ${passwordTarget.nombre}.`;
     document.getElementById('passwordDialog').showModal();
   }
 
   async function resetPassword(event) {
     event.preventDefault();
+    const target = passwordTarget;
     try {
       await S.api('resetPassword', {
         id: document.getElementById('passwordUserId').value,
         password: document.getElementById('resetPasswordValue').value
       }, { loader: true });
+
       document.getElementById('passwordDialog').close();
+
+      if (target?.rol === 'ADMIN') {
+        S.toast('Contraseña del Administrador actualizada. Cerrando sesión para que ingreses con la nueva clave.', 'success', 5000);
+        window.setTimeout(() => {
+          const logoutForm = document.querySelector('form[action*="/Auth/Logout"]');
+          if (logoutForm) logoutForm.submit();
+          else window.location.reload();
+        }, 900);
+        return;
+      }
+
       S.toast('Contraseña actualizada. Las sesiones anteriores fueron invalidadas.', 'success', 4500);
+      passwordTarget = null;
     } catch { }
   }
 })();

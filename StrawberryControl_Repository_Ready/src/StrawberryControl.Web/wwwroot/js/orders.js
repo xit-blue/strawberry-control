@@ -10,13 +10,12 @@
 
   async function init() {
     wireEvents();
-    await loadStates();
-    await loadOrders();
+    await Promise.allSettled([loadStates(), loadOrders(false)]);
   }
 
   function wireEvents() {
     document.getElementById('applyFilters')?.addEventListener('click', () => { page = 1; loadOrders(); });
-    document.getElementById('refreshOrders')?.addEventListener('click', loadOrders);
+    document.getElementById('refreshOrders')?.addEventListener('click', () => loadOrders(true));
     document.getElementById('clearFilters')?.addEventListener('click', () => {
       ['filterSearch','filterState','filterZone','filterFrom','filterTo'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
       document.getElementById('filterPlatform').value = 'TODAS';
@@ -37,7 +36,7 @@
     } catch { }
   }
 
-  async function loadOrders() {
+  async function loadOrders(forceFresh = false) {
     const body = document.getElementById('ordersBody');
     body.innerHTML = '<tr><td colspan="10"><div class="table-loading">Cargando pedidos...</div></td></tr>';
     try {
@@ -49,7 +48,8 @@
         desde: document.getElementById('filterFrom').value,
         hasta: document.getElementById('filterTo').value,
         page,
-        pageSize: Number(document.getElementById('pageSize').value || 50)
+        pageSize: Number(document.getElementById('pageSize').value || 50),
+        fresh: forceFresh
       };
       const data = await S.api('listOrders', payload, { toast: false });
       const result = data.data || {};

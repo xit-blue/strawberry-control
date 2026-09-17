@@ -3,7 +3,7 @@
     var isAdmin = User.IsInRole("ADMIN");
 }
 <section class="page-heading">
-    <div><span class="eyebrow">RESUMEN OPERATIVO</span><h1>Hola, @User.Identity?.Name</h1><p>Revisa el estado actual de la operación y los pendientes prioritarios.</p></div>
+    <div><span class="eyebrow">RESUMEN OPERATIVO</span><h1>Hola, @User.Identity?.Name</h1><p>Revisa el estado actual de la operación y los pendientes prioritarios. <span id="dashboardFreshness" class="muted"></span></p></div>
     <div class="heading-actions">
         @if (isAdmin) { <button class="btn btn-ghost" id="syncButton" type="button">Sincronizar Shopify</button> }
         <button class="btn btn-primary" id="refreshDashboard" type="button">Actualizar</button>
@@ -13,7 +13,7 @@
 <section class="hero-grid">
     <article class="hero-card hero-main">
         <div><span class="eyebrow light">CONTROL DEL DÍA</span><h2 id="heroTotal">— pedidos</h2><p id="heroText">Cargando actividad...</p></div>
-        <img src="~/images/product-2.png" alt="Strawberry Skin Cream" />
+        <img src="~/images/product-2.webp" alt="Strawberry Skin Cream" width="1000" height="1000" decoding="async" fetchpriority="high" />
     </article>
     <article class="hero-card compact"><span class="metric-label">Llamadas hoy</span><strong id="callsToday">—</strong><small>contactos registrados</small></article>
     <article class="hero-card compact"><span class="metric-label">Atendiendo ahora</span><strong id="activeNow">—</strong><small>pedidos bloqueados</small></article>
@@ -49,7 +49,7 @@
         <div id="stateBars" class="bar-list"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
     </article>
     <article class="card promo-card">
-        <img src="~/images/product-4.png" alt="Producto Strawberry Skin Cream" />
+        <img src="~/images/product-4.webp" alt="Producto Strawberry Skin Cream" width="1000" height="1000" loading="lazy" decoding="async" />
         <div><span class="eyebrow">ACCESO RÁPIDO</span><h3>Gestiona la cola de pedidos</h3><p>Busca por cliente, teléfono, pedido o ubicación y continúa desde el último contacto registrado.</p><a class="btn btn-primary" asp-controller="Orders" asp-action="Index">Abrir pedidos</a></div>
     </article>
 </section>
