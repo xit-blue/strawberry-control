@@ -74,7 +74,7 @@ builder.Services
 
         client.BaseAddress = new Uri(baseUrl);
         client.Timeout = TimeSpan.FromSeconds(55);
-        client.DefaultRequestHeaders.UserAgent.ParseAdd("StrawberryControl-ASPNET/4.7");
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("StrawberryControl-ASPNET/4.7.1");
         client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
     })
     .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
@@ -115,7 +115,7 @@ app.MapGet("/healthz", () => Results.Ok(new
 {
     ok = true,
     service = "Strawberry Control ASP.NET Core",
-    version = "4.7"
+    version = "4.7.1"
 })).AllowAnonymous();
 
 app.MapControllerRoute(

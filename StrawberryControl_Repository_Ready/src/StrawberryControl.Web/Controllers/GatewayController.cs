@@ -106,7 +106,7 @@ public sealed class GatewayController(
     private static TimeSpan CacheTtl(string action) => action.ToLowerInvariant() switch
     {
         "admindashboard" or "operationaldashboard" => TimeSpan.FromSeconds(30),
-        "listorders" or "list" => TimeSpan.FromSeconds(12),
+        "listorders" or "list" => TimeSpan.FromSeconds(30),
         "getorder" => TimeSpan.FromSeconds(8),
         "listcallhistory" => TimeSpan.FromSeconds(10),
         "states" => TimeSpan.FromMinutes(5),

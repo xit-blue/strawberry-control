@@ -38,7 +38,9 @@
 
   async function loadOrders(forceFresh = false) {
     const body = document.getElementById('ordersBody');
-    body.innerHTML = '<tr><td colspan="10"><div class="table-loading">Cargando pedidos...</div></td></tr>';
+    const refreshButton = document.getElementById('refreshOrders');
+    if (refreshButton) { refreshButton.disabled = true; refreshButton.dataset.originalText ||= refreshButton.textContent; refreshButton.textContent = forceFresh ? 'Sincronizando...' : 'Cargando...'; }
+    body.innerHTML = '<tr><td colspan="10"><div class="table-loading">Cargando pedidos… La primera consulta puede tardar unos segundos.</div></td></tr>';
     try {
       const payload = {
         q: document.getElementById('filterSearch').value,
@@ -62,7 +64,11 @@
       document.getElementById('prevPage').disabled = page <= 1;
       document.getElementById('nextPage').disabled = page >= pages;
     } catch (error) {
-      body.innerHTML = `<tr><td colspan="10"><div class="table-loading">${S.escapeHtml(error.message)}</div></td></tr>`;
+      body.innerHTML = `<tr><td colspan="10"><div class="table-loading">${S.escapeHtml(error.message)} <button class="btn btn-ghost btn-sm" id="retryOrdersInline" type="button">Reintentar</button></div></td></tr>`;
+      document.getElementById('retryOrdersInline')?.addEventListener('click', () => loadOrders(false));
+    } finally {
+      const refreshButton = document.getElementById('refreshOrders');
+      if (refreshButton) { refreshButton.disabled = false; refreshButton.textContent = refreshButton.dataset.originalText || 'Actualizar lista'; }
     }
   }
 
