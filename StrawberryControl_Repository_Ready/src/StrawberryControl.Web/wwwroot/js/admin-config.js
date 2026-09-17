@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const S = window.Strawberry;
-  const ids = ['precio1','precio2','precio3','precioExtra','costoUnitario','fleteLima','fleteProvincia','producto','um','maxIntentos','diasEsperaAdelanto','minutosBloqueo','horasSesion'];
+  const ids = ['precio1','precio2','precio3','precioExtra','costoUnitario','fleteLima','fleteProvincia','tipoCambioPublicidad','producto','um','maxIntentos','diasEsperaAdelanto','minutosBloqueo','horasSesion'];
 
   document.addEventListener('DOMContentLoaded', init);
 
@@ -34,8 +34,8 @@
       payload[id] = el.type === 'number' ? Number(el.value || 0) : el.value.trim();
     });
 
-    if (payload.precio1 < 0 || payload.precio2 < 0 || payload.precio3 < 0 || payload.precioExtra < 0 || payload.costoUnitario < 0 || payload.fleteLima < 0 || payload.fleteProvincia < 0) {
-      S.toast('Precios, costos y fletes no pueden ser negativos.', 'error');
+    if (payload.precio1 < 0 || payload.precio2 < 0 || payload.precio3 < 0 || payload.precioExtra < 0 || payload.costoUnitario < 0 || payload.fleteLima < 0 || payload.fleteProvincia < 0 || payload.tipoCambioPublicidad <= 0) {
+      S.toast('Precios, costos y fletes no pueden ser negativos y el tipo de cambio debe ser mayor que 0.', 'error');
       return;
     }
 

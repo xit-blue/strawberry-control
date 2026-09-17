@@ -2,6 +2,7 @@
   'use strict';
   const S = window.Strawberry;
   let items = [];
+  let exchangeRate = 3.5;
 
   document.addEventListener('DOMContentLoaded', init);
 
@@ -10,7 +11,7 @@
     document.getElementById('advertisingForm').addEventListener('submit', save);
     document.getElementById('newAdvertising').addEventListener('click', clearForm);
     document.getElementById('clearAdvertising').addEventListener('click', clearForm);
-    ['fbPen','ttPen'].forEach(id => document.getElementById(id).addEventListener('input', updateTotal));
+    ['fbUsd','ttPen'].forEach(id => document.getElementById(id).addEventListener('input', updateTotal));
     load();
   }
 
@@ -18,7 +19,11 @@
     try {
       const data = await S.api('listAdvertising', {}, { loader: true });
       items = data.items || [];
+      exchangeRate = Number(data.tipoCambioPublicidad || 3.5);
+      const note = document.getElementById('exchangeRateNote');
+      if (note) note.textContent = `Conversión automática: Facebook US$ × ${exchangeRate.toFixed(2)} = Facebook S/`;
       render();
+      updateTotal();
     } catch { }
   }
 
@@ -56,7 +61,6 @@
       id: document.getElementById('advertisingId').value,
       fecha: document.getElementById('advertisingDate').value,
       fbDolares: Number(document.getElementById('fbUsd').value || 0),
-      fbSoles: Number(document.getElementById('fbPen').value || 0),
       tiktokSoles: Number(document.getElementById('ttPen').value || 0),
       observacion: document.getElementById('advertisingNote').value
     };
@@ -89,7 +93,11 @@
   }
 
   function updateTotal() {
-    const total = Number(document.getElementById('fbPen').value || 0) + Number(document.getElementById('ttPen').value || 0);
+    const usd = Number(document.getElementById('fbUsd').value || 0);
+    const fb = Math.round((usd * exchangeRate) * 100) / 100;
+    const tt = Number(document.getElementById('ttPen').value || 0);
+    const total = Math.round((fb + tt) * 100) / 100;
+    document.getElementById('fbPen').value = fb.toFixed(2);
     document.getElementById('totalPen').value = S.money(total);
   }
 
